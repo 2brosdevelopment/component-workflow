@@ -10,7 +10,7 @@
         /**
          * @var Node
          */
-        private $start;
+        private $startNode;
 
         /**
          * @var NodeMap
@@ -27,10 +27,10 @@
          */
         private $current;
 
-        public function __construct( Node $start, NodeMap $nodes, EventDispatcherInterface $eventDispatcher )
+        public function __construct( Node $startNode, NodeMap $nodes, EventDispatcherInterface $eventDispatcher )
         {
 
-            $this->start           = $start;
+            $this->startNode       = $startNode;
             $this->nodes           = $nodes;
             $this->eventDispatcher = $eventDispatcher;
             $this->current         = null;
@@ -48,8 +48,8 @@
         public function initialize( $token = null )
         {
 
-            if (null === $token) {
-                $this->current = $this->start;
+            if ($this->isStartOfWorkflow( $token )) {
+                $this->current = $this->startNode;
             } elseif ($this->nodes->has( $token )) {
                 $this->current = $this->nodes->get( $token );
             } else {
@@ -73,15 +73,15 @@
         public function next( ContextInterface $context )
         {
 
-            if (null === $this->current) {
+            if ($this->isWorkflowInitialized()) {
                 throw new Exception\NotInitializedWorkflowException();
             }
 
             $transitions = $this->current->getOpenTransitions( $context );
 
-            if (0 === count( $transitions )) {
+            if ($this->areThereNoOpenTransitions( $transitions )) {
                 throw new Exception\NoOpenTransitionException();
-            } elseif (1 < count( $transitions )) {
+            } elseif ($this->isThereMoreThanOneOpenTransition( $transitions )) {
                 throw new Exception\MoreThanOneOpenTransitionException();
             }
 
@@ -93,5 +93,63 @@
             $this->eventDispatcher->dispatch( $token, new Event( $context, $token ) );
 
             return $this;
+        }
+
+        /**
+         * isStartOfWorkflow
+         *
+         * @param $token
+         *
+         * @return bool
+         * @author  Vincent Sposato <vincent.sposato@gmail.com>
+         * @version v1.0
+         */
+        protected function isStartOfWorkflow( $token )
+        {
+
+            return null === $token;
+        }
+
+        /**
+         * isWorkflowInitialized
+         *
+         * @return bool
+         * @author  Vincent Sposato <vincent.sposato@gmail.com>
+         * @version v1.0
+         */
+        protected function isWorkflowInitialized()
+        {
+
+            return null === $this->current;
+        }
+
+        /**
+         * areThereNoOpenTransitions
+         *
+         * @param $transitions
+         *
+         * @return bool
+         * @author  Vincent Sposato <vincent.sposato@gmail.com>
+         * @version v1.0
+         */
+        protected function areThereNoOpenTransitions( $transitions )
+        {
+
+            return 0 === count( $transitions );
+        }
+
+        /**
+         * isThereMoreThanOneOpenTransition
+         *
+         * @param $transitions
+         *
+         * @return bool
+         * @author  Vincent Sposato <vincent.sposato@gmail.com>
+         * @version v1.0
+         */
+        protected function isThereMoreThanOneOpenTransition( $transitions )
+        {
+
+            return 1 < count( $transitions );
         }
     }

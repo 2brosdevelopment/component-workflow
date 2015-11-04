@@ -28,7 +28,7 @@
 
             $name = (string) $name;
 
-            if (!isset( $this->items[ $name ] )) {
+            if ($this->doesNodeExistAlready( $name )) {
                 $this->items[ $name ] = new Node( $name );
             }
 
@@ -48,5 +48,20 @@
             $name = (string) $name;
 
             return isset( $this->items[ $name ] );
+        }
+
+        /**
+         * doesNodeExistAlready
+         *
+         * @param $name
+         *
+         * @return bool
+         * @author  Vincent Sposato <vincent.sposato@gmail.com>
+         * @version v1.0
+         */
+        protected function doesNodeExistAlready( $name )
+        {
+
+            return !isset( $this->items[ $name ] );
         }
     }

@@ -8,28 +8,28 @@
         /**
          * @var Node
          */
-        private $src;
+        private $source;
 
         /**
          * @var Node
          */
-        private $dst;
+        private $destination;
 
         /**
          * @var SpecificationInterface
          */
-        private $spec;
+        private $specification;
 
-        public function __construct( Node $src, Node $dst, SpecificationInterface $spec )
+        public function __construct( Node $sourceNode, Node $destinationNode, SpecificationInterface $specification )
         {
 
-            $this->src  = $src;
-            $this->dst  = $dst;
-            $this->spec = $spec;
+            $this->source        = $sourceNode;
+            $this->destination   = $destinationNode;
+            $this->specification = $specification;
         }
 
         /**
-         * Checks if the current transition satisfies the specifiation on the given context.
+         * Checks if the current transition satisfies the specification on the given context.
          *
          * @param ContextInterface $context
          *
@@ -38,7 +38,7 @@
         public function isOpen( ContextInterface $context )
         {
 
-            return $this->spec->isSatisfiedBy( $context );
+            return $this->specification->isSatisfiedBy( $context );
         }
 
         /**
@@ -49,6 +49,6 @@
         public function getDestination()
         {
 
-            return $this->dst;
+            return $this->destination;
         }
     }

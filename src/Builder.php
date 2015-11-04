@@ -34,16 +34,16 @@
         /**
          * Opens a workflow.
          *
-         * @param string                 $src
-         * @param SpecificationInterface $spec
+         * @param string                 $sourceNode
+         * @param SpecificationInterface $specification
          *
          * @return Builder
          */
-        public function open( $src, SpecificationInterface $spec )
+        public function open( $sourceNode, SpecificationInterface $specification )
         {
 
             $this->start = $this->nodes->get( uniqid() );
-            $this->start->addTransition( $this->nodes->get( $src ), $spec );
+            $this->start->addTransition( $this->nodes->get( $sourceNode ), $specification );
 
             return $this;
         }
@@ -51,23 +51,23 @@
         /**
          * Adds a link to the workflow.
          *
-         * @param string                 $src
-         * @param string                 $dst
-         * @param SpecificationInterface $spec
+         * @param string                 $sourceNode
+         * @param string                 $destinationNode
+         * @param SpecificationInterface $specification
          *
          * @return Builder
          *
          * @throws Exception\NoStartingNodeBuilderException
          */
-        public function link( $src, $dst, SpecificationInterface $spec )
+        public function link( $sourceNode, $destinationNode, SpecificationInterface $specification )
         {
 
-            if (null === $this->start) {
+            if ($this->isThereAStartingNode()) {
                 throw new Exception\NoStartingNodeBuilderException();
             };
 
-            $this->nodes->get( $src )
-                        ->addTransition( $this->nodes->get( $dst ), $spec );
+            $this->nodes->get( $sourceNode )
+                        ->addTransition( $this->nodes->get( $destinationNode ), $specification );
 
             return $this;
         }
@@ -82,10 +82,23 @@
         public function getWorkflow()
         {
 
-            if (null === $this->start) {
+            if ($this->isThereAStartingNode()) {
                 throw new Exception\NoStartingNodeBuilderException();
             };
 
             return new Workflow( $this->start, $this->nodes, $this->eventDispatcher );
+        }
+
+        /**
+         * isThereAStartingNode
+         *
+         * @return bool
+         * @author  Vincent Sposato <vincent.sposato@gmail.com>
+         * @version v1.0
+         */
+        protected function isThereAStartingNode()
+        {
+
+            return null === $this->start;
         }
     }

@@ -36,15 +36,15 @@
         /**
          * Adds a transition.
          *
-         * @param Node                   $dst
-         * @param SpecificationInterface $spec
+         * @param Node                   $destinationNode
+         * @param SpecificationInterface $specification
          *
          * @return Node
          */
-        public function addTransition( Node $dst, SpecificationInterface $spec )
+        public function addTransition( Node $destinationNode, SpecificationInterface $specification )
         {
 
-            $this->transitions[] = new Transition( $this, $dst, $spec );
+            $this->transitions[] = new Transition( $this, $destinationNode, $specification );
         }
 
         /**
